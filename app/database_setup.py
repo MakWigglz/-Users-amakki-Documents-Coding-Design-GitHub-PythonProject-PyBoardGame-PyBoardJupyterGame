@@ -12,7 +12,6 @@ def setup_database(db_path, json_path):
             paragraphs TEXT
         )
     ''')
-
     with open(json_path, 'r') as f:
         data = json.load(f)
         for item in data:
