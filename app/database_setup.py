@@ -15,8 +15,10 @@ def setup_database(db_path, json_path):
     with open(json_path, 'r') as f:
         data = json.load(f)
         for item in data:
-            cursor.execute("INSERT OR REPLACE INTO topics (topic, paragraphs) VALUES (?, ?)",
-                           (item['topic'], json.dumps(item['paragraphs'])))
+            cursor.executemany('''
+    INSERT OR REPLACE INTO subjects (title, content)
+    VALUES (?, ?);
+''', [(entry['title'], entry['content']) for entry in data])
             
     conn.commit()
     conn.close()
