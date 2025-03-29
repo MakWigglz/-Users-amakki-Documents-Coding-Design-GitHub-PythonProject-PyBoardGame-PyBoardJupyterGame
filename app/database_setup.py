@@ -23,7 +23,7 @@ def setup_database(db_path, json_path):
     conn.commit()
     conn.close()
 if __name__ == "__main__":
-    db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'game_data.db')
+    db_path = '/Users/amakki/Documents/Coding-Design/GitHub/PythonProject/PyBoardGame/PyBoardJupyterGame/game_data.db'
     json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'paragraphs.json')
     setup_database(db_path, json_path)
             
