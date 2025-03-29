@@ -3,7 +3,7 @@ import json
 import os
 
 def setup_database(db_path, json_path):
-    conn = sqlite.connect(db_path)
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute('''
