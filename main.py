@@ -1,15 +1,10 @@
-from flask import Flask, render_template, jsonify
-from game import game  # Import your game logic
-from database import queries  # Import your database queries
-app = Flask(__name__)
-@app.route('/')
-def home():
-    return render_template('index.html')
-@app.route('/data')
-def get_data():
-    # Load data from paragraphs.json
-    with open('data/paragraphs.json') as f:
-        data = json.load(f)
-    return jsonify(data)
-if __name__ == '__main__':
-    app.run(debug=True)
+# main.py
+from database.database_setup import create_database
+from database.queries import get_all_paragraphs, add_paragraph
+DB_PATH = 'your_database_name.db'  # Define the database path
+# Initialize the database
+create_database(DB_PATH)
+# Example usage of queries
+add_paragraph(DB_PATH, "This is a sample paragraph.")
+paragraphs = get_all_paragraphs(DB_PATH)
+print(paragraphs)
