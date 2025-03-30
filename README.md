@@ -282,8 +282,8 @@ def setup_database(db_path, json_path):
     print("Database setup complete!")
 
 # Specify paths
-db_path = 'my_database.db'
-json_path = 'data.json'
+db_path = 'pyboardjupytergame/game_data.db'
+json_path = 'paragraphs.json'
 
 # Call the setup function
 setup_database(db_path, json_path)
