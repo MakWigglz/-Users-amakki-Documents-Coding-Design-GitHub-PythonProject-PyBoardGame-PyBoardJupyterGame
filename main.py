@@ -1,11 +1,21 @@
-# main.py
-from database.database_setup import create_database
-from database.queries import get_all_paragraphs, add_paragraph
-DB_PATH = '/Users/amakki/Documents/Coding-Design/GitHub/PythonProject/PyBoardGame/PyBoardJupyterGame/game_data.db'  # Define the database path
-# Initialize the database
-create_database(DB_PATH)
-# Example usage of queries
-add_paragraph(DB_PATH, "Biology is the study of living organisms and their interactions with the environment. It is the study of evolution also, which explains the diversity of life on Earth. In addition to evolution, biology delves into genetics, understanding how traits are inherited across generations. Cellular biology studies the complex structures and functions of cells, the building blocks of life. Ecology, a branch of biology, explores the interdependence between organisms and ecosystems. Biotechnology harnesses biological processes for applications like medicine and agriculture. Physiology investigates how bodily systems work and adapt. Microbiology examines microscopic life forms like bacteria and viruses. Ethology studies animal behavior in their natural habitats. Developmental biology focuses on organism growth from zygote to maturity. Lastly, conservation biology aims to protect biodiversity in the face of environmental change.")
-add_paragraph(DB_PATH, "Astronomy is the study of celestial objects, space, and the universe as a whole. It encompasses the observation and analysis of stars, galaxies, and planets. Astrophysics applies physics to understand the properties and behavior of these celestial bodies. Cosmology studies the universe's origin, evolution, and fate. Radio astronomy uses radio waves to explore distant objects. Planetary science investigates the composition and formation of planets. Stellar astronomy focuses on the lifecycle of stars, from their birth in nebulae to their death as black holes or supernovae. Space exploration involves human and robotic missions to investigate extraterrestrial environments. Exoplanet research searches for planets orbiting other stars. Gravitational wave astronomy detects ripples in spacetime from cosmic events. Optical telescopes, both ground-based and in orbit, continue to expand our understanding of the vast cosmos.")
-paragraphs = get_all_paragraphs(DB_PATH)
-print(paragraphs)
+from flask import Flask, render_template, request, redirect, url_for
+   from database.database_setup import create_database
+   from database.queries import get_all_paragraphs, add_paragraph
+   app = Flask(__name__)
+   DB_PATH = '/Users/amakki/Documents/Coding-Design/GitHub/PythonProject/PyBoardGame/PyBoardJupyterGame/game_data.db'
+   # Initialize the database
+   create_database(DB_PATH)
+   @app.route('/')
+   def home():
+       # Fetch all paragraphs to display on the homepage
+       paragraphs = get_all_paragraphs(DB_PATH)
+       return render_template('index.html', paragraphs=paragraphs)
+   @app.route('/add_paragraph', methods=['POST'])
+   def add_paragraph_route():
+       # Get the paragraph text from the form
+       paragraph_text = request.form.get('paragraph')
+       if paragraph_text:
+           add_paragraph(DB_PATH, paragraph_text)
+       return redirect(url_for('home'))
+   if __name__ == '__main__':
+       app.run(debug=True)
