@@ -8,11 +8,12 @@ def create_database(db_path):
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS paragraphs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            text TEXT NOT NULL
-        )
+            title TEXT NOT NULL,
+            paragraphs TEXT
+        );
     ''')
     
     conn.commit()
     conn.close()
 if __name__ == "__main__":
-    create_database('your_database_name.db')  # Replace with your actual database path
+    create_database('/Users/amakki/Documents/Coding-Design/GitHub/PythonProject/PyBoardGame/PyBoardJupyterGame/game_data.db')  # Replace with your actual database path
