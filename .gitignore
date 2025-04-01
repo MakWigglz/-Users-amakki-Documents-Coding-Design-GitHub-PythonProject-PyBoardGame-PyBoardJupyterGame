@@ -9,7 +9,25 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-
+*.__pycache__
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+*.so
+*.pdb
+*.dll
+*.lib
+*.exp
+*.obj
+*.o
+*.a
+*.la
+*.al
+*.lo
+*.c
+*.h
+*.
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
