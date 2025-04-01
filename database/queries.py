@@ -1,4 +1,5 @@
 # database/queries.py
+import json
 import sqlite3
 def get_all_paragraphs(db_path):
     conn = sqlite3.connect(db_path)
