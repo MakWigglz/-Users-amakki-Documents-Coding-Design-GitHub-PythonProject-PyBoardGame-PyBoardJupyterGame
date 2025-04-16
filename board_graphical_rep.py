@@ -1,5 +1,4 @@
 # board_graphical_rep.py
-import csv
 import json
 import tkinter as tk
 from tkinter import simpledialog, messagebox
@@ -13,11 +12,12 @@ class Square:
     @classmethod
     def available_colors(cls):
         """Class method to return all available colors"""
-        return cls.colors
+        return cls.board_color
 
     @classmethod
     def user_feedback(cls):
-        return cls.feedback
+        """Class method to return user feedback options"""
+        return cls.user_input
 
     def __init__(self, row, column, title, paragraph, canvas_coords):
         self.row = row  # Object attribute
@@ -34,10 +34,11 @@ def load_square_data_from_json(filepath):
         with open(filepath, 'r', encoding='utf-8') as jsonfile:
             data = json.load(jsonfile)
         if not isinstance(data, list) or len(data) != Square.board_size or \
-           not all(isinstance(item, dict) and 'title' in item and 'paragraph'
-                   in item for item in data):
-            raise ValueError(f"JSON file must be a list of {Square.board_size}dictionaries,
-                              each with 'title' and 'paragraph' keys.")
+           not all(isinstance(item, dict) and 'title' in item and 'paragraph' in item for item in data):
+            raise ValueError(
+                f"JSON file must be a list of {Square.board_size} dictionaries "
+                f"each with 'title' and 'paragraph' keys."
+            )
         return data
     except FileNotFoundError:
         print(f"Error: JSON file not found at {filepath}")
@@ -48,23 +49,28 @@ def load_square_data_from_json(filepath):
     except ValueError as e:
         print(f"Error loading JSON data: {e}")
         return None
+
 class BoardGame:
     def __init__(self, master, data_source='json', data_filepath=None):
         self.master = master
         master.title("Educational Board Game")
-        self.canvas_width = 2000
-        self.canvas_height = 2000
+        self.canvas_width = 600
+        self.canvas_height = 600
         self.board_rows = 8
         self.board_cols = 8
         self.square_size = self.canvas_width // self.board_cols
 
-        self.canvas = tk.Canvas(master, width=self.canvas_width, \
-                      height=self.canvas_height, bg="red")
+        self.canvas = tk.Canvas(master, width=self.canvas_width,
+                                height=self.canvas_height, bg="red")
         self.canvas.pack()
 
         # Use the provided filepath or a default one
-        self.square_data = load_square_data_from_json(data_filepath or
-                         '/default/path/to/your/jsonfile.json')
+        self.square_data = load_square_data_from_json(
+             data_filepath or (
+                     '/Users/amakki/Documents/Coding-Design/GitHub/PythonProject/'
+                     'PyBoardGame/class_based_modular_pyboard/data/paragraphs.json'
+                     )
+                 )
 
         if self.square_data:
             self.squares = self.create_board()
@@ -72,9 +78,12 @@ class BoardGame:
 
             self.player_position = 0  # start at the first square
             self.player_piece = None
-                        self.create_player_piece()
+            self.create_player_piece()
 
-            self.dice_button = tk.Button(master, text="Roll Dice", command=self.roll_dice)
+            self.square_data = load_square_data_from_json(
+                data_filepath or '/default/path.json'
+            )
+
             self.dice_button.pack(pady=10)
 
             self.info_label = tk.Label(master, text="")
@@ -83,7 +92,11 @@ class BoardGame:
             self.display_square_info(self.player_position)
         else:
             # Handle the case where data loading failed
-            messagebox.showerror("Error", "Failed to load game data. The application will close.")
+            messagebox.showerror(
+                 "Error",
+                 "Failed to load game data. The application will close."
+                 )
+
             master.destroy()
 
     def load_game_data(self, data_source, filepath):
@@ -92,7 +105,10 @@ class BoardGame:
         elif data_source.lower() == 'json':
             return load_square_data_from_json(filepath)
         else:
-            print(f"Error: Invalid data source '{data_source}'. Choose 'csv' or 'json'.")
+            print(
+                 f"Error: Invalid data source '{data_source}'. "
+                 "Choose 'csv' or 'json'."
+             )
             return None
 
     def create_board(self):
@@ -105,7 +121,16 @@ class BoardGame:
                 y1 = r * self.square_size
                 x2 = (c + 1) * self.square_size
                 y2 = (r + 1) * self.square_size
-                canvas_coords = (x1 + self.square_size // 2, y1 + self.square_size // 2)
+
+                # Calculate the center of the square
+                canvas_coords = ((x1 + x2) // 2, (y1 + y2) // 2)
+
+                # Do something with canvas_coords (e.g., add to row_squares)
+                row_squares.append(canvas_coords)
+
+    # Possibly add row_squares to a list or use it further
+    # self.board.append(row_squares) (if you're storing the grid somewhere)
+
 
                 # Get data for the current square from the loaded data
                 if self.square_data and n < len(self.square_data):
@@ -123,17 +148,18 @@ class BoardGame:
         return [sq for row in squares for sq in row] # Flatten the 2D list
 
     def draw_board(self):
-        for i, square in enumerate(self.squares):
+        for i, square in enumerate(self.squares):  # Enumerate through squares
             row = i // self.board_cols
             col = i % self.board_cols
             x1 = col * self.square_size
             y1 = row * self.square_size
             x2 = (col + 1) * self.square_size
-            y2 = (r + 1) * self.square_size
-            color = "white" if (row + col) % 2 == 0 else "lightyellow"
-            self.canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
-            self.canvas.create_text(square.canvas_coords, text=str(i + 1), font=("Arial", 10, "bold"))
+            y2 = (row + 1) * self.square_size  # Corrected variable name (row instead of r)
 
+        # Set alternating colors for the board squares
+        color = "white" if (row + col) % 2 == 0 else "lightyellow"
+        self.canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
+        self.canvas.create_text(square.canvas_coords, text=str(i + 1), font=("Arial", 10, "bold"))
     def create_player_piece(self):
         start_square = self.squares[self.player_position]
         x, y = start_square.canvas_coords
@@ -176,29 +202,5 @@ class BoardGame:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    game = BoardGame(root) # Now defaults to JSON and your specified path
+    game = BoardGame(root)  # Now defaults to JSON and your specified path
     root.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
